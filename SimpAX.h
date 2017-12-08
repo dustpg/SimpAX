@@ -24,11 +24,11 @@ namespace SimpAX {
         auto end() const noexcept { return b; }
     };
     // is same
-    SAX_API bool IsSame(const StrPair& a, const StrPair&b) noexcept;
+    SAX_API bool IsSame(const StrPair a, const StrPair b) noexcept;
     // StrPair == StrPair
-    inline bool operator ==(const StrPair& a, const StrPair&b) noexcept { return IsSame(a, b); }
+    inline bool operator ==(const StrPair a, const StrPair b) noexcept { return IsSame(a, b); }
     // StrPair != StrPair
-    inline bool operator !=(const StrPair& a, const StrPair&b) noexcept { return !IsSame(a, b); }
+    inline bool operator !=(const StrPair a, const StrPair b) noexcept { return !IsSame(a, b); }
     // Result
     struct Result { 
         // error code enum
