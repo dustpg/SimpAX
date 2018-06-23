@@ -1,4 +1,4 @@
-#include "xul/SimpAX.h"
+#include "SimpAX.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>
