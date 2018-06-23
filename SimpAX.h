@@ -11,6 +11,8 @@
 //#define SAX_API _declspec(dllexport)
 #define SAX_API
 
+#define SAX_PURE_METHOD = 0
+
 namespace SimpAX {
     // char type, utf-8 as default
     using Char = char; // wchar_t char16_t char32_t
@@ -23,12 +25,21 @@ namespace SimpAX {
         // end
         auto end() const noexcept { return b; }
     };
+    // stack element
+    struct StackEle {
+        // string pair
+        StrPair             pair;
+        // user pointer
+        void*               user_ptr;
+        // user data
+        size_t              user_data;
+    };
     // is same
-    SAX_API bool IsSame(const StrPair& a, const StrPair&b) noexcept;
+    SAX_API bool IsSame(const StrPair a, const StrPair b) noexcept;
     // StrPair == StrPair
-    inline bool operator ==(const StrPair& a, const StrPair&b) noexcept { return IsSame(a, b); }
+    inline bool operator ==(const StrPair a, const StrPair b) noexcept { return IsSame(a, b); }
     // StrPair != StrPair
-    inline bool operator !=(const StrPair& a, const StrPair&b) noexcept { return !IsSame(a, b); }
+    inline bool operator !=(const StrPair a, const StrPair b) noexcept { return !IsSame(a, b); }
     // Result
     struct Result { 
         // error code enum
@@ -73,6 +84,10 @@ namespace SimpAX {
         SAX_API ~CAXStream() noexcept;
         // load string
         SAX_API auto Load(const Char* str) noexcept ->Result;
+        // find char in pair, return null on not-found
+        static auto FindChar(StrPair, Char) noexcept -> const Char*;
+        // find equation in pair
+        static auto FindEquation(StrPair, const Char*) noexcept->StrPair;
     private:
         // free
         static void free(void*) noexcept;
@@ -82,17 +97,17 @@ namespace SimpAX {
         static void*realloc(void* ptr, size_t) noexcept;
     private:
         // add Processing Instruction
-        virtual void add_processing(const PIs& attr) noexcept;
+        virtual void add_processing(const PIs& attr) noexcept SAX_PURE_METHOD;
         // begin element
-        virtual void begin_element(const StrPair tag) noexcept;
+        virtual void begin_element(const StrPair tag) noexcept SAX_PURE_METHOD;
         // end element
-        virtual void end_element(const StrPair tag) noexcept;
+        virtual void end_element(const StrPair tag) noexcept SAX_PURE_METHOD;
         // add attribute
-        virtual void add_attribute(const ATTRs& attr) noexcept;
+        virtual void add_attribute(const ATTRs& attr) noexcept SAX_PURE_METHOD;
         // add comment
-        virtual void add_comment(const StrPair ) noexcept;
+        virtual void add_comment(const StrPair ) noexcept SAX_PURE_METHOD;
         // add text, maybe add more once like <a>A<b/>B</a>
-        virtual void add_text(const StrPair) noexcept;
+        virtual void add_text(const StrPair) noexcept SAX_PURE_METHOD;
     protected:
         // find first namespace
         SAX_API static void find_1st_namespace(StrPair& pair) noexcept;
@@ -104,10 +119,10 @@ namespace SimpAX {
         auto stack_end() noexcept { return m_pStackTop; }
 #ifdef NDEBUG
         // top element
-        auto stack_top() noexcept->StrPair& { return m_pStackTop[-1]; }
+        auto stack_top() noexcept->StackEle& { return m_pStackTop[-1]; }
 #else
         // top element
-        SAX_API auto stack_top() noexcept->StrPair&;
+        SAX_API auto stack_top() noexcept->StackEle&;
 #endif
     private:
         // interpret escape
@@ -126,12 +141,12 @@ namespace SimpAX {
         // escape buffer end
         Char*           m_pEscapeBufferEnd = nullptr;
         // stack base
-        StrPair*        m_pStackBase = m_aStackBuffer;
+        StackEle*       m_pStackBase = m_aStackBuffer;
         // stack top len
-        StrPair*        m_pStackTop = m_aStackBuffer;
+        StackEle*       m_pStackTop = m_aStackBuffer;
         // stack top cap
-        StrPair*        m_pStackCap = m_aStackBuffer + FIXED_STACK_LENGTH;
+        StackEle*       m_pStackCap = m_aStackBuffer + FIXED_STACK_LENGTH;
         // fixed buffer
-        StrPair         m_aStackBuffer[FIXED_STACK_LENGTH];
+        StackEle        m_aStackBuffer[FIXED_STACK_LENGTH];
     };
 }
