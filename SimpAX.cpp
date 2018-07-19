@@ -1,4 +1,4 @@
-#include "SimpAX.h"
+﻿#include "SimpAX.h"
 #include <cassert>
 #include <cstddef>
 #include <memory>
@@ -95,7 +95,6 @@ auto SimpAX::CAXStream::FindEquation(StrPair pair, const Char* name) noexcept ->
 #ifdef _MSC_VER
 _declspec(noinline)
 #endif
-
 /// <summary>
 /// Operator==s the specified a.
 /// </summary>
@@ -379,7 +378,6 @@ auto SimpAX::CAXStream::Load(const Char* str) noexcept -> Result {
             if (impl::is_end_pi(ch)) {
                 this_pi.target.b = str;
                 this_pi.instructions.a = str;
-                [[fallthrough]];
             }
             // 空白
             else {
@@ -390,6 +388,7 @@ auto SimpAX::CAXStream::Load(const Char* str) noexcept -> Result {
                 }
                 break;
             }
+            [[fallthrough]];
         case sm_pi_end:
             // 等待?>
             if (impl::is_end_pi(ch)) {
@@ -729,12 +728,14 @@ bool SimpAX::CAXStream::push(StrPair str) {
     return false;
 }
 
+#ifdef _MSC_VER
+_declspec(noinline)
+#endif
 /// <summary>
 /// Interprets the escape.
 /// </summary>
 /// <param name="">The .</param>
 /// <returns></returns>
-_declspec(noinline)
 void SimpAX::CAXStream::interpret_escape(StrPair& pair) noexcept {
     // 保证数据准确
     const auto length = pair.end() - pair.begin();
