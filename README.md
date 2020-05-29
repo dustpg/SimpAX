@@ -2,4 +2,4 @@
   
   Simple API for XML(SAX)
   
-  under public domain, add SimpAX.h/cpp to you project
+  under public domain, add SimpAX.h/cpp to your project
